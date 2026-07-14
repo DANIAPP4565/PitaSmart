@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Streamlit: nunca publicar secretos
+.streamlit/secrets.toml
+
+# Datos clínicos y archivos importados
+*.pdf
+*.xlsx
+*.xls
+*.csv
+*.json
+*.zip
+*.mp4
+*.pptx
+
+# Sistema/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
