@@ -1,4 +1,4 @@
-# app.py  ·  EUROPHARMA — PitaSmart
+# app.py  ·  EUROFARMA — PitaSmart
 # Entrada multipágina en Streamlit basada en FUNCIONES (no requiere carpeta pages/).
 # Ejecutar:  streamlit run app.py
 #
@@ -42,7 +42,7 @@ def page_inicio():
 
     theme.page_hero(
         title="PitaSmart",
-        subtitle="Plataforma de decisión clínica de EUROPHARMA para seleccionar la estrategia con pitavastatina, "
+        subtitle="Plataforma de decisión clínica de EUROFARMA para seleccionar la estrategia con pitavastatina, "
                  "cuantificar la brecha a meta de LDL-C y seguir la respuesta del paciente.",
         eyebrow="Laboratorio clínico · Cardiometabolismo",
         icon="💊",
