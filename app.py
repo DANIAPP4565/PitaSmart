@@ -5,26 +5,624 @@
 # Solo se necesitan 3 archivos en el repositorio/carpeta:
 #   app.py    -> este archivo (navegación + páginas como funciones)
 #   core.py   -> motor clínico (lógica intacta del app original)
-#   theme.py  -> identidad visual Europharma
+#   theme.py  -> componentes visuales complementarios de EUROFARMA
 # No hace falta ninguna subcarpeta pages/.
 
 import json
 from datetime import datetime
+from html import escape
 
 import pandas as pd
 import streamlit as st
 
+BRAND_NAME = "EUROFARMA"
+PRODUCT_NAME = "PitaSmart"
+BRAND_AREA = "Cardiometabolismo"
+BRAND_PROMISE = "Del laboratorio a la meta terapéutica, con decisiones claras y trazables."
+
 st.set_page_config(
-    page_title="Eurofarma · PitaSmart",
+    page_title=f"{BRAND_NAME} · {PRODUCT_NAME}",
     page_icon="💊",
     layout="wide",
     initial_sidebar_state="expanded",
+    menu_items={
+        "About": f"{PRODUCT_NAME} · Plataforma profesional de apoyo a la decisión clínica de {BRAND_NAME}.",
+    },
 )
 
 import core
 import theme
 
 theme.inject_theme()
+
+
+def inject_eurofarma_marketing_theme():
+    """Capa visual corporativa; no modifica ninguna regla clínica."""
+    st.markdown(
+        """
+        <style>
+        :root {
+            --ef-navy: #08233f;
+            --ef-blue: #0066b3;
+            --ef-sky: #16a7d9;
+            --ef-teal: #00a58a;
+            --ef-lime: #8cc63f;
+            --ef-ink: #10263d;
+            --ef-muted: #64778b;
+            --ef-line: #dce8f2;
+            --ef-surface: #ffffff;
+            --ef-soft: #f4f9fc;
+            --ef-shadow: 0 18px 45px rgba(8, 35, 63, .10);
+        }
+
+        html, body, [class*="css"] {
+            font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .stApp {
+            background:
+                radial-gradient(circle at 94% 4%, rgba(22, 167, 217, .10), transparent 24rem),
+                radial-gradient(circle at 8% 96%, rgba(0, 165, 138, .08), transparent 25rem),
+                linear-gradient(180deg, #f8fbfd 0%, #f3f8fb 100%);
+            color: var(--ef-ink);
+        }
+
+        [data-testid="stHeader"] {
+            background: rgba(248, 251, 253, .78);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(220, 232, 242, .75);
+        }
+
+        .block-container {
+            max-width: 1500px;
+            padding-top: 1.35rem;
+            padding-bottom: 3rem;
+        }
+
+        [data-testid="stSidebar"] {
+            background:
+                radial-gradient(circle at 15% 3%, rgba(22, 167, 217, .25), transparent 15rem),
+                linear-gradient(165deg, #061b31 0%, #0a345b 58%, #07546d 100%);
+            border-right: 0;
+        }
+
+        [data-testid="stSidebar"] [data-testid="stSidebarContent"] {
+            padding-top: .7rem;
+        }
+
+        [data-testid="stSidebar"] .stMarkdown,
+        [data-testid="stSidebar"] label,
+        [data-testid="stSidebar"] p,
+        [data-testid="stSidebar"] h1,
+        [data-testid="stSidebar"] h2,
+        [data-testid="stSidebar"] h3 {
+            color: #eef8ff;
+        }
+
+        [data-testid="stSidebar"] hr {
+            border-color: rgba(255, 255, 255, .16);
+        }
+
+        [data-testid="stSidebar"] [data-baseweb="select"] > div,
+        [data-testid="stSidebar"] .stTextInput input,
+        [data-testid="stSidebar"] .stNumberInput input {
+            background: rgba(255,255,255,.96);
+            color: #10263d;
+            border-color: rgba(255,255,255,.35);
+        }
+
+        .ef-sidebar-brand {
+            position: relative;
+            overflow: hidden;
+            padding: 1.15rem 1.05rem;
+            margin: .15rem 0 1rem;
+            border: 1px solid rgba(255,255,255,.18);
+            border-radius: 20px;
+            background: linear-gradient(145deg, rgba(255,255,255,.15), rgba(255,255,255,.06));
+            box-shadow: 0 14px 34px rgba(0,0,0,.16);
+        }
+
+        .ef-sidebar-brand::after {
+            content: "";
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            right: -55px;
+            top: -55px;
+            border-radius: 999px;
+            background: rgba(140,198,63,.20);
+        }
+
+        .ef-sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ef-logo-mini {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            font-weight: 900;
+            letter-spacing: -.06em;
+            color: white;
+            background: linear-gradient(135deg, var(--ef-sky), var(--ef-teal));
+            box-shadow: 0 10px 20px rgba(0,0,0,.18);
+        }
+
+        .ef-sidebar-name {
+            color: white;
+            font-size: 1.02rem;
+            font-weight: 850;
+            letter-spacing: .045em;
+            line-height: 1.05;
+        }
+
+        .ef-sidebar-product {
+            display: block;
+            margin-top: .18rem;
+            color: #bfeaff;
+            font-size: .78rem;
+            font-weight: 650;
+            letter-spacing: .02em;
+        }
+
+        .ef-sidebar-copy {
+            position: relative;
+            z-index: 1;
+            margin: .85rem 0 0;
+            color: #d7ecf8;
+            font-size: .80rem;
+            line-height: 1.45;
+        }
+
+        .ef-sidebar-trust {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .35rem;
+            margin-top: .75rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ef-sidebar-trust span {
+            padding: .25rem .48rem;
+            border-radius: 999px;
+            background: rgba(255,255,255,.10);
+            border: 1px solid rgba(255,255,255,.12);
+            color: #eefaff;
+            font-size: .68rem;
+            font-weight: 650;
+        }
+
+        .ef-hero {
+            position: relative;
+            overflow: hidden;
+            margin: 0 0 1.25rem;
+            padding: clamp(1.35rem, 3vw, 2.25rem);
+            border: 1px solid rgba(0, 102, 179, .14);
+            border-radius: 28px;
+            background:
+                radial-gradient(circle at 91% 18%, rgba(140,198,63,.22), transparent 14rem),
+                radial-gradient(circle at 74% 84%, rgba(22,167,217,.18), transparent 17rem),
+                linear-gradient(130deg, #ffffff 0%, #f2f9fd 56%, #eaf7f8 100%);
+            box-shadow: var(--ef-shadow);
+        }
+
+        .ef-hero::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 7px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--ef-blue), var(--ef-teal), var(--ef-lime));
+        }
+
+        .ef-hero-grid {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .ef-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            margin-bottom: .65rem;
+            color: var(--ef-blue);
+            font-size: .76rem;
+            font-weight: 850;
+            letter-spacing: .11em;
+            text-transform: uppercase;
+        }
+
+        .ef-eyebrow-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 99px;
+            background: var(--ef-teal);
+            box-shadow: 0 0 0 5px rgba(0,165,138,.12);
+        }
+
+        .ef-title-row {
+            display: flex;
+            align-items: center;
+            gap: .8rem;
+        }
+
+        .ef-title-icon {
+            width: 52px;
+            height: 52px;
+            flex: 0 0 52px;
+            display: grid;
+            place-items: center;
+            border-radius: 17px;
+            font-size: 1.45rem;
+            background: linear-gradient(145deg, #e9f7ff, #e9faf6);
+            border: 1px solid rgba(0,102,179,.12);
+        }
+
+        .ef-title-row h1 {
+            margin: 0;
+            color: var(--ef-navy);
+            font-size: clamp(2rem, 4.5vw, 3.55rem);
+            line-height: .98;
+            letter-spacing: -.055em;
+            font-weight: 900;
+        }
+
+        .ef-hero p {
+            max-width: 850px;
+            margin: .95rem 0 .9rem;
+            color: #455f76;
+            font-size: clamp(.98rem, 1.5vw, 1.12rem);
+            line-height: 1.58;
+        }
+
+        .ef-trust-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+        }
+
+        .ef-trust-row span {
+            display: inline-flex;
+            align-items: center;
+            padding: .34rem .62rem;
+            border-radius: 999px;
+            border: 1px solid #d8e8f2;
+            background: rgba(255,255,255,.76);
+            color: #35546c;
+            font-size: .73rem;
+            font-weight: 700;
+        }
+
+        .ef-brand-lockup {
+            min-width: 190px;
+            padding: 1rem 1.1rem;
+            border-radius: 22px;
+            border: 1px solid rgba(0,102,179,.13);
+            background: rgba(255,255,255,.76);
+            box-shadow: 0 12px 30px rgba(8,35,63,.08);
+            text-align: center;
+        }
+
+        .ef-brand-symbol {
+            width: 62px;
+            height: 62px;
+            margin: 0 auto .7rem;
+            display: grid;
+            place-items: center;
+            border-radius: 20px;
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 950;
+            letter-spacing: -.05em;
+            background: linear-gradient(135deg, var(--ef-blue), var(--ef-sky) 52%, var(--ef-teal));
+            box-shadow: 0 12px 24px rgba(0,102,179,.25);
+        }
+
+        .ef-brand-name {
+            color: var(--ef-navy);
+            font-size: 1rem;
+            font-weight: 950;
+            letter-spacing: .08em;
+        }
+
+        .ef-brand-area {
+            display: block;
+            margin-top: .22rem;
+            color: var(--ef-muted);
+            font-size: .70rem;
+            font-weight: 650;
+        }
+
+        .ef-value-card {
+            height: 100%;
+            min-height: 168px;
+            padding: 1.1rem 1.15rem;
+            border-radius: 20px;
+            border: 1px solid var(--ef-line);
+            background: rgba(255,255,255,.88);
+            box-shadow: 0 12px 28px rgba(8,35,63,.07);
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+        }
+
+        .ef-value-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(0,102,179,.28);
+            box-shadow: 0 18px 34px rgba(8,35,63,.11);
+        }
+
+        .ef-value-icon {
+            font-size: 1.35rem;
+            margin-bottom: .55rem;
+        }
+
+        .ef-value-title {
+            color: var(--ef-navy);
+            font-size: 1rem;
+            font-weight: 850;
+            margin-bottom: .35rem;
+        }
+
+        .ef-value-copy {
+            color: var(--ef-muted);
+            font-size: .83rem;
+            line-height: 1.48;
+        }
+
+        .ef-outcome-strip {
+            display: grid;
+            grid-template-columns: 1.2fr repeat(3, 1fr);
+            gap: .7rem;
+            margin: .4rem 0 1.2rem;
+            padding: .8rem;
+            border-radius: 22px;
+            color: white;
+            background: linear-gradient(115deg, #08233f, #07527b 58%, #087f80);
+            box-shadow: 0 18px 36px rgba(8,35,63,.18);
+        }
+
+        .ef-outcome-main,
+        .ef-outcome-item {
+            padding: .75rem .85rem;
+        }
+
+        .ef-outcome-main strong {
+            display: block;
+            font-size: 1.02rem;
+            margin-bottom: .24rem;
+        }
+
+        .ef-outcome-main span,
+        .ef-outcome-item span {
+            color: #d7ecf8;
+            font-size: .75rem;
+            line-height: 1.35;
+        }
+
+        .ef-outcome-item {
+            border-left: 1px solid rgba(255,255,255,.16);
+        }
+
+        .ef-outcome-item b {
+            display: block;
+            font-size: .85rem;
+            margin-bottom: .2rem;
+        }
+
+        div[data-testid="stMetric"] {
+            padding: .95rem 1rem;
+            border: 1px solid var(--ef-line);
+            border-radius: 18px;
+            background: rgba(255,255,255,.90);
+            box-shadow: 0 10px 24px rgba(8,35,63,.06);
+        }
+
+        div[data-testid="stMetric"] label {
+            color: var(--ef-muted);
+        }
+
+        .stButton > button,
+        .stDownloadButton > button,
+        [data-testid="stPageLink"] a {
+            min-height: 2.55rem;
+            border-radius: 13px;
+            border: 1px solid rgba(0,102,179,.20);
+            font-weight: 750;
+            transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+        }
+
+        .stButton > button:hover,
+        .stDownloadButton > button:hover,
+        [data-testid="stPageLink"] a:hover {
+            transform: translateY(-1px);
+            border-color: var(--ef-blue);
+            box-shadow: 0 9px 20px rgba(0,102,179,.13);
+        }
+
+        .stButton > button[kind="primary"] {
+            color: white;
+            border: 0;
+            background: linear-gradient(110deg, var(--ef-blue), var(--ef-sky) 58%, var(--ef-teal));
+            box-shadow: 0 12px 24px rgba(0,102,179,.20);
+        }
+
+        .stTabs [data-baseweb="tab-list"] {
+            gap: .45rem;
+            padding: .35rem;
+            border-radius: 15px;
+            background: #eaf3f8;
+        }
+
+        .stTabs [data-baseweb="tab"] {
+            border-radius: 11px;
+            font-weight: 750;
+        }
+
+        .stTabs [aria-selected="true"] {
+            background: white;
+            box-shadow: 0 6px 16px rgba(8,35,63,.08);
+        }
+
+        .stTextInput input,
+        .stNumberInput input,
+        .stTextArea textarea,
+        [data-baseweb="select"] > div,
+        [data-testid="stFileUploaderDropzone"] {
+            border-radius: 13px !important;
+            border-color: #cddfea !important;
+            background: rgba(255,255,255,.90) !important;
+        }
+
+        [data-testid="stDataFrame"] {
+            overflow: hidden;
+            border: 1px solid var(--ef-line);
+            border-radius: 16px;
+            box-shadow: 0 8px 22px rgba(8,35,63,.05);
+        }
+
+        .stAlert {
+            border-radius: 16px;
+            border-width: 1px;
+        }
+
+        .badge,
+        .ep-chip {
+            margin-right: .42rem;
+            margin-bottom: .35rem;
+        }
+
+        .ef-footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 2.3rem;
+            padding: 1.05rem 1.15rem;
+            border-top: 1px solid var(--ef-line);
+            color: var(--ef-muted);
+            font-size: .75rem;
+        }
+
+        .ef-footer strong {
+            color: var(--ef-navy);
+            letter-spacing: .025em;
+        }
+
+        @media (max-width: 900px) {
+            .ef-hero-grid { grid-template-columns: 1fr; }
+            .ef-brand-lockup { display: none; }
+            .ef-outcome-strip { grid-template-columns: 1fr 1fr; }
+            .ef-outcome-item { border-left: 0; border-top: 1px solid rgba(255,255,255,.14); }
+        }
+
+        @media (max-width: 640px) {
+            .block-container { padding-left: .85rem; padding-right: .85rem; }
+            .ef-title-row h1 { font-size: 2rem; }
+            .ef-outcome-strip { grid-template-columns: 1fr; }
+            .ef-footer { align-items: flex-start; flex-direction: column; }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def brand_hero(title: str, subtitle: str, eyebrow: str, icon: str = "💊") -> None:
+    st.markdown(
+        f"""
+        <section class="ef-hero">
+            <div class="ef-hero-grid">
+                <div>
+                    <div class="ef-eyebrow"><span class="ef-eyebrow-dot"></span>{escape(eyebrow)}</div>
+                    <div class="ef-title-row">
+                        <div class="ef-title-icon">{escape(icon)}</div>
+                        <h1>{escape(title)}</h1>
+                    </div>
+                    <p>{escape(subtitle)}</p>
+                    <div class="ef-trust-row">
+                        <span>✓ Apoyo a la decisión clínica</span>
+                        <span>✓ Datos revisables y trazables</span>
+                        <span>✓ Experiencia profesional</span>
+                    </div>
+                </div>
+                <div class="ef-brand-lockup">
+                    <div class="ef-brand-symbol">EF</div>
+                    <div class="ef-brand-name">{BRAND_NAME}</div>
+                    <span class="ef-brand-area">{BRAND_AREA} · Innovación digital</span>
+                </div>
+            </div>
+        </section>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def brand_sidebar() -> None:
+    st.markdown(
+        f"""
+        <div class="ef-sidebar-brand">
+            <div class="ef-sidebar-logo">
+                <div class="ef-logo-mini">EF</div>
+                <div>
+                    <div class="ef-sidebar-name">{BRAND_NAME}</div>
+                    <span class="ef-sidebar-product">{PRODUCT_NAME} · {BRAND_AREA}</span>
+                </div>
+            </div>
+            <p class="ef-sidebar-copy">{BRAND_PROMISE}</p>
+            <div class="ef-sidebar-trust">
+                <span>Uso profesional</span>
+                <span>Datos anonimizados</span>
+                <span>Informe exportable</span>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def app_footer(version: str, app_date: str, regulatory: str) -> None:
+    author = st.session_state.get("cfg_author", "").strip()
+    author_text = f" · {escape(author)}" if author else ""
+    st.markdown(
+        f"""
+        <footer class="ef-footer">
+            <div><strong>{BRAND_NAME} · {PRODUCT_NAME}</strong>{author_text}</div>
+            <div>Versión {escape(str(version))} · {escape(str(app_date))} · {escape(str(regulatory or 'Uso profesional'))}</div>
+        </footer>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def marketing_value_proposition() -> None:
+    st.markdown(
+        """
+        <div class="ef-outcome-strip">
+            <div class="ef-outcome-main">
+                <strong>Una experiencia clínica digital de principio a fin</strong>
+                <span>Transforma datos de laboratorio en una conversación terapéutica clara, medible y documentada.</span>
+            </div>
+            <div class="ef-outcome-item"><b>1 · Detectar</b><span>Importación y revisión inteligente de datos.</span></div>
+            <div class="ef-outcome-item"><b>2 · Decidir</b><span>Brecha a meta, seguridad y estrategia.</span></div>
+            <div class="ef-outcome-item"><b>3 · Demostrar</b><span>Seguimiento e informe profesional exportable.</span></div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+inject_eurofarma_marketing_theme()
 core.init_state()
 
 
@@ -40,22 +638,24 @@ def page_inicio():
     data, goal = core.build_base_data()
     gap = core.required_ldl_reduction(data["ldl"], goal)
 
-    theme.page_hero(
+    brand_hero(
         title="PitaSmart",
-        subtitle="Plataforma de decisión clínica de EUROFARMA para seleccionar la estrategia con pitavastatina, "
-                 "cuantificar la brecha a meta de LDL-C y seguir la respuesta del paciente.",
-        eyebrow="Laboratorio clínico · Cardiometabolismo",
+        subtitle="Ecosistema digital de EUROFARMA para convertir datos de laboratorio en una decisión terapéutica "
+                 "clara, segura, medible y fácil de comunicar al paciente.",
+        eyebrow="EUROFARMA · Cardiometabolismo digital",
         icon="💊",
     )
 
     st.markdown(
-        f'<span class="badge">{core.APP_VERSION}</span>'
-        f'<span class="ep-chip ep-chip-teal">Actualización {core.APP_DATE}</span>'
+        f'<span class="badge">{BRAND_NAME}</span>'
+        f'<span class="ep-chip ep-chip-teal">{PRODUCT_NAME} · {core.APP_VERSION}</span>'
+        f'<span class="badge">Actualización {core.APP_DATE}</span>'
         f'<span class="badge">{st.session_state.get("cfg_regulatory","")}</span>',
         unsafe_allow_html=True,
     )
 
     st.write("")
+    marketing_value_proposition()
     theme.section("Panorama del caso activo", "Valores vigentes que la plataforma usará en la evaluación.")
     k1, k2, k3, k4 = st.columns(4)
     with k1:
@@ -73,14 +673,30 @@ def page_inicio():
     theme.goal_meter(data["ldl"], data["ldl"], goal)
 
     st.write("")
-    theme.section("Recorrido de la plataforma", "Cada módulo es una página; el flujo recomendado va de izquierda a derecha.")
+    theme.section("Valor para la práctica clínica", "Diseñada para mejorar la experiencia del profesional, la comprensión del paciente y la trazabilidad de cada decisión.")
+    v1, v2, v3 = st.columns(3)
+    value_cards = [
+        (v1, "🎯", "Decisión accionable", "Expone la brecha a meta y compara estrategias para orientar la próxima conducta clínica."),
+        (v2, "🛡️", "Confianza en los datos", "Conserva el valor original, permite corregirlo y deja constancia del valor realmente utilizado."),
+        (v3, "📣", "Comunicación de alto impacto", "Convierte el análisis en seguimiento, material para el paciente e informes listos para compartir."),
+    ]
+    for col, ico, title, copy in value_cards:
+        with col:
+            st.markdown(
+                f'<div class="ef-value-card"><div class="ef-value-icon">{ico}</div>'
+                f'<div class="ef-value-title">{title}</div><div class="ef-value-copy">{copy}</div></div>',
+                unsafe_allow_html=True,
+            )
+
+    st.write("")
+    theme.section("Recorrido de la plataforma", "Un flujo simple y progresivo: importar, decidir, seguir y documentar.")
 
     r1 = st.columns(4)
     items1 = [
-        ("📥", "Importar laboratorio", "Leé un PDF o texto, corregí y confirmá los valores.", "importar"),
-        ("🧭", "Decisión y meta", "Brecha a meta, comparador de estrategias e interacciones.", "decision"),
-        ("📈", "Seguimiento", "Compará respuesta observada vs. esperada y tolerabilidad.", "seguimiento"),
-        ("📄", "Informe", "Generá y descargá el informe en MD, PDF, Excel o JSON.", "informe"),
+        ("📥", "Importar laboratorio", "Capturá, verificá y confirmá los datos que impulsarán la decisión.", "importar"),
+        ("🧭", "Decisión y meta", "Convertí la brecha de LDL-C en una estrategia clínica argumentada.", "decision"),
+        ("📈", "Seguimiento", "Demostrá respuesta, tolerabilidad y progreso hacia la meta.", "seguimiento"),
+        ("📄", "Informe", "Comunicá el valor clínico con entregables profesionales y exportables.", "informe"),
     ]
     for col, (ico, ttl, desc, key) in zip(r1, items1):
         with col:
@@ -104,11 +720,11 @@ def page_inicio():
 
     st.write("")
     st.warning(
-        "Herramienta de apoyo educativo para profesionales. No reemplaza el juicio clínico, la historia clínica "
-        "completa, las guías vigentes ni el prospecto aprobado local.",
+        "Plataforma de apoyo a la decisión para profesionales de la salud. Complementa —y no reemplaza— el juicio "
+        "clínico, la historia médica completa, las guías vigentes ni el prospecto aprobado local.",
         icon="⚠️",
     )
-    theme.footer(core.APP_VERSION, core.APP_DATE, st.session_state.get("cfg_regulatory", ""))
+    app_footer(core.APP_VERSION, core.APP_DATE, st.session_state.get("cfg_regulatory", ""))
 
 
 # ======================================================================
@@ -116,7 +732,7 @@ def page_inicio():
 # ======================================================================
 def page_importar():
     NAV = _nav()
-    theme.page_hero(
+    brand_hero(
         title="Importar laboratorio",
         subtitle="Leé el PDF o el texto del laboratorio, revisá cada valor con su confianza y plausibilidad, "
                  "corregí lo dudoso y confirmá qué usará la evaluación.",
@@ -357,7 +973,7 @@ def page_importar():
 
     if NAV.get("decision") is not None:
         st.page_link(NAV["decision"], label="Continuar a Decisión y meta", icon="🧭")
-    theme.footer(core.APP_VERSION, core.APP_DATE, st.session_state.get("cfg_regulatory", ""))
+    app_footer(core.APP_VERSION, core.APP_DATE, st.session_state.get("cfg_regulatory", ""))
 
 
 # ======================================================================
@@ -367,7 +983,7 @@ def page_decision():
     NAV = _nav()
     data, goal_ldl = core.build_base_data()
 
-    theme.page_hero(
+    brand_hero(
         title="Decisión y llegada a meta",
         subtitle="Calcula la reducción necesaria, compara monoterapia y combinaciones, explica por qué elegir "
                  "pitavastatina y define el plan de control.",
@@ -596,7 +1212,7 @@ def page_decision():
 
     if NAV.get("informe") is not None:
         st.page_link(NAV["informe"], label="Ir al Informe y descargas", icon="📄")
-    theme.footer(core.APP_VERSION, core.APP_DATE, st.session_state.get("cfg_regulatory", ""))
+    app_footer(core.APP_VERSION, core.APP_DATE, st.session_state.get("cfg_regulatory", ""))
 
 
 # ======================================================================
@@ -606,7 +1222,7 @@ def page_seguimiento():
     data, goal_ldl = core.build_base_data()
     data = core.apply_clinical_defaults(data)
 
-    theme.page_hero(
+    brand_hero(
         title="Seguimiento de respuesta",
         subtitle="Compará la respuesta observada con la esperada y evitá declarar fracaso sin revisar adherencia y "
                  "tiempo de exposición.",
@@ -681,7 +1297,7 @@ def page_seguimiento():
     for action in followup_analysis["actions"]:
         st.write("• " + action)
 
-    theme.footer(core.APP_VERSION, core.APP_DATE, st.session_state.get("cfg_regulatory", ""))
+    app_footer(core.APP_VERSION, core.APP_DATE, st.session_state.get("cfg_regulatory", ""))
 
 
 # ======================================================================
@@ -709,7 +1325,7 @@ def page_informe():
         _classification, _card_class, _summary = core.final_classification(_indications, _red_flags, _yellow_flags, data, _dose_info, goal_ldl)
     _advantages = st.session_state.get("last_advantages", core.personalized_advantages(data, _dose_info))
 
-    theme.page_hero(
+    brand_hero(
         title="Informe y descargas",
         subtitle="Generá el informe clínico integrado y exportalo en los formatos que necesites: Markdown, PDF, "
                  "Excel/CSV o JSON anonimizado.",
@@ -730,14 +1346,14 @@ def page_informe():
     theme.section("Descargas")
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        st.download_button("⬇️ Informe Markdown", edited_report.encode("utf-8"), "informe_PitaSmart.md", "text/markdown", width="stretch")
+        st.download_button("⬇️ Informe Markdown", edited_report.encode("utf-8"), "EUROFARMA_PitaSmart_informe.md", "text/markdown", width="stretch")
     with c2:
         bytes_export, fname, mime = core.make_export_table(data, _classification, _dose_info, _red_flags, _yellow_flags, _advantages, _interactions)
         st.download_button("⬇️ Datos Excel/CSV", bytes_export, fname, mime, width="stretch")
     with c3:
         if core.REPORTLAB_OK:
             pdf = core.report_to_pdf(edited_report)
-            st.download_button("⬇️ Informe PDF", pdf, "informe_PitaSmart.pdf", "application/pdf", width="stretch")
+            st.download_button("⬇️ Informe PDF", pdf, "EUROFARMA_PitaSmart_informe.pdf", "application/pdf", width="stretch")
         else:
             st.info("Para PDF instale reportlab.")
     with c4:
@@ -749,14 +1365,14 @@ def page_informe():
             width="stretch",
         )
 
-    theme.footer(core.APP_VERSION, core.APP_DATE, st.session_state.get("cfg_regulatory", ""))
+    app_footer(core.APP_VERSION, core.APP_DATE, st.session_state.get("cfg_regulatory", ""))
 
 
 # ======================================================================
 # PÁGINA · BASE Y EVIDENCIA
 # ======================================================================
 def page_evidencia():
-    theme.page_hero(
+    brand_hero(
         title="Base clínica y evidencia",
         subtitle="Indicaciones, escenarios terapéuticos comparados, matriz de evidencia y base de conocimiento de "
                  "interacciones con reglas específicas de pitavastatina.",
@@ -851,14 +1467,14 @@ def page_evidencia():
         {"Situación": "Embarazo", "Nivel": "Situación especial", "Acción": "Revisar necesidad terapéutica individual y prospecto local"},
     ]), width="stretch", hide_index=True)
 
-    theme.footer(core.APP_VERSION, core.APP_DATE, st.session_state.get("cfg_regulatory", ""))
+    app_footer(core.APP_VERSION, core.APP_DATE, st.session_state.get("cfg_regulatory", ""))
 
 
 # ======================================================================
 # PÁGINA · TEXTO PARA PACIENTE
 # ======================================================================
 def page_paciente():
-    theme.page_hero(
+    brand_hero(
         title="Texto para paciente",
         subtitle="Material educativo editable y descargable, con los mensajes clave de seguridad y adherencia.",
         eyebrow="Conocimiento",
@@ -866,7 +1482,7 @@ def page_paciente():
     )
     theme.section("Texto editable")
     txt = st.text_area("Texto editable", value=core.patient_text(), height=260, label_visibility="collapsed")
-    st.download_button("⬇️ Descargar texto paciente", txt.encode("utf-8"), "educacion_paciente_pitavastatina.txt", "text/plain")
+    st.download_button("⬇️ Descargar texto paciente", txt.encode("utf-8"), "EUROFARMA_PitaSmart_educacion_paciente.txt", "text/plain")
 
     theme.section("Mensajes clave")
     st.write("• Mantener cambios de estilo de vida.")
@@ -874,14 +1490,14 @@ def page_paciente():
     st.write("• Avisar por dolor muscular intenso, debilidad marcada, fiebre, orina oscura o ictericia.")
     st.write("• Llevar lista actualizada de medicamentos para revisar interacciones.")
 
-    theme.footer(core.APP_VERSION, core.APP_DATE, st.session_state.get("cfg_regulatory", ""))
+    app_footer(core.APP_VERSION, core.APP_DATE, st.session_state.get("cfg_regulatory", ""))
 
 
 # ======================================================================
 # PÁGINA · FUENTES Y USO
 # ======================================================================
 def page_fuentes():
-    theme.page_hero(
+    brand_hero(
         title="Fuentes y uso",
         subtitle="Referencias que respaldan la base de conocimiento, instalación local y notas para una versión "
                  "institucional.",
@@ -909,14 +1525,14 @@ def page_fuentes():
     st.write("• Integrar el calculador PREVENT oficial solo con coeficientes y validación documentados; actualmente se "
              "registra un valor calculado externamente.")
 
-    theme.footer(core.APP_VERSION, core.APP_DATE, st.session_state.get("cfg_regulatory", ""))
+    app_footer(core.APP_VERSION, core.APP_DATE, st.session_state.get("cfg_regulatory", ""))
 
 
 # ======================================================================
 # NAVEGACIÓN
 # ======================================================================
 with st.sidebar:
-    theme.brand_sidebar()
+    brand_sidebar()
 
 p_inicio = st.Page(page_inicio, title="Inicio", icon="🏠", default=True, url_path="inicio")
 p_importar = st.Page(page_importar, title="Importar laboratorio", icon="📥", url_path="importar")
@@ -944,7 +1560,7 @@ pg = st.navigation(
 
 with st.sidebar:
     st.divider()
-    st.markdown("### ⚙️ Configuración")
+    st.markdown("### ⚙️ Configuración clínica")
     st.text_input("Autor / firma", key="cfg_author")
     st.selectbox("Marco de referencia", core.REGULATORY_OPTIONS, key="cfg_regulatory")
     st.selectbox("Categoría de riesgo", list(core.OBJETIVOS_LDL.keys()), key="cfg_risk_category")
@@ -955,6 +1571,6 @@ with st.sidebar:
         help="Sólo se aplica cuando la categoría de riesgo es 'Personalizado'.",
     )
     st.divider()
-    st.caption("🔐 El PDF se lee en memoria y no se guarda. Se exportan sólo datos anonimizados/análisis.")
+    st.caption("🔐 Privacidad por diseño: el PDF se procesa en memoria y se exportan sólo datos anonimizados o resultados del análisis.")
 
 pg.run()
